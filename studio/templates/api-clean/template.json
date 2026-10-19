@@ -1,0 +1,30 @@
+{
+  "id": "api-clean",
+  "label": "API limpa",
+  "description": "Estrutura no estilo de api/: domain, usecase, repositorios, controllers, rotas, workers, gateways e migrations knex.",
+  "entry": "index.js",
+  "questions": [
+    { "id": "name", "label": "Nome do projeto", "type": "text", "required": true },
+    { "id": "port", "label": "Porta", "type": "port", "required": true },
+    { "id": "database", "label": "Banco de dados", "type": "text" },
+    {
+      "id": "services",
+      "label": "Servicos",
+      "type": "services",
+      "options": ["mysql", "redis", "rabbitmq", "mailpit"]
+    }
+  ],
+  "services": ["mysql", "redis", "rabbitmq", "mailpit"],
+  "suggestedServices": ["mysql"],
+  "blocks": ["core", ".studio/blocks"],
+  "layers": {
+    "domain": { "path": "@core/domain", "editor": "domain-form", "file": "{Entity}.js" },
+    "usecase": { "path": "@core/usecase/{Entity}", "editor": "blocks", "file": "{action}{Entity}UseCase.js" },
+    "repository": { "path": "infrastructure/db/services", "editor": "text", "file": "{Entity}Repository.js" },
+    "controller": { "path": "infrastructure/Controllers", "editor": "text", "file": "{Entity}Controller.js" },
+    "routes": { "path": "infrastructure/routes", "editor": "text", "file": "{entity}.js" },
+    "worker": { "path": "infrastructure/queue/workers", "editor": "text", "file": "{name}Worker.js" },
+    "migration": { "path": "knex/migrations", "editor": "text", "file": "{timestamp}_{snake}.js" },
+    "gateway": { "path": "infrastructure/gateways", "editor": "text", "file": "{Name}/index.js" }
+  }
+}

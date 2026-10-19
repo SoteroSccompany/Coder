@@ -1,0 +1,1 @@
+const Server = require("./infrastructure/server/index"); Server.createServer();

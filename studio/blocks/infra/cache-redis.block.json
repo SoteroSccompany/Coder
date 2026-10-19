@@ -1,0 +1,43 @@
+{
+  "id": "infra.cache-redis",
+  "label": "Cache Redis",
+  "categoria": "infra",
+  "icone": "cache",
+  "priority": 64,
+  "geracao": "chamada",
+  "slots": [
+    {
+      "name": "variavel",
+      "tipo": "variavel",
+      "direcao": "saida",
+      "label": "Variável"
+    },
+    {
+      "name": "alvo",
+      "tipo": "variavel",
+      "direcao": "entrada",
+      "label": "Alvo"
+    },
+    {
+      "name": "metodo",
+      "tipo": "string",
+      "direcao": "entrada",
+      "label": "Método"
+    },
+    {
+      "name": "argumentos",
+      "tipo": "expressao",
+      "direcao": "entrada",
+      "label": "Argumentos"
+    }
+  ],
+  "imports": [],
+  "template": "await {{alvo}}.set({{argumentos}});",
+  "pattern": {
+    "kind": "call",
+    "await": true,
+    "objectMatch": "redis|Redis|cache|Cache",
+    "methodMatch": "^(get|set|del)$"
+  },
+  "containers": []
+}

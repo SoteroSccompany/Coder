@@ -1,0 +1,21 @@
+PORT=3210
+DB_CLIENT=mysql2
+DB_HOST=mysql
+DB_PORT=3306
+DB_USER=
+DB_PASS=
+DB_DATABASE=teste
+REDIS_HOST=redis
+REDIS_PORT=6379
+RABBITMQ_HOST=rabbitmq
+RABBITMQ_PORT=5672
+RABBITMQ_USER=
+RABBITMQ_PASSWORD=
+MAIL_HOST=mailpit
+MAIL_PORT=1025
+
+# studio: variaveis acrescentadas pelo catalogo
+DB_PASS_USER=
+
+# studio: variaveis acrescentadas pelo catalogo
+REDIS_PASS=

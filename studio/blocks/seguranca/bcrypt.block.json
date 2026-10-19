@@ -1,0 +1,60 @@
+{
+  "id": "seguranca.bcrypt",
+  "label": "Bcrypt",
+  "categoria": "seguranca",
+  "icone": "key",
+  "priority": 68,
+  "slots": [
+    {
+      "name": "variavel",
+      "tipo": "variavel",
+      "direcao": "saida",
+      "label": "Variável"
+    },
+    {
+      "name": "argumentos",
+      "tipo": "expressao",
+      "direcao": "entrada",
+      "label": "Argumentos"
+    },
+    {
+      "name": "alvo",
+      "tipo": "variavel",
+      "direcao": "entrada",
+      "label": "Instância",
+      "padrao": "bcrypt"
+    },
+    {
+      "name": "metodo",
+      "tipo": "string",
+      "direcao": "entrada",
+      "label": "Método",
+      "padrao": "encrypt"
+    }
+  ],
+  "imports": [
+    {
+      "local": "BCRYPT",
+      "source": "../../../infrastructure/gateways/crypt/Bcrypt",
+      "destructure": [
+        "BCRYPT"
+      ]
+    }
+  ],
+  "template": "const {{variavel}} = new BCRYPT({{argumentos}});",
+  "pattern": [
+    {
+      "kind": "new",
+      "ctorName": "BCRYPT",
+      "geracao": "new"
+    },
+    {
+      "kind": "call",
+      "await": false,
+      "objectMatch": "^bcrypt$",
+      "methodMatch": "^(encrypt|compare|hash)$",
+      "geracao": "chamada"
+    }
+  ],
+  "containers": []
+}

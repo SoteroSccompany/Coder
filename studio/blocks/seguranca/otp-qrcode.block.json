@@ -1,0 +1,51 @@
+{
+  "id": "seguranca.otp-qrcode",
+  "label": "Gerar OTP/QRCode",
+  "categoria": "seguranca",
+  "icone": "qrcode",
+  "priority": 75,
+  "geracao": "chamada",
+  "slots": [
+    {
+      "name": "variavel",
+      "tipo": "variavel",
+      "direcao": "saida",
+      "label": "Variável"
+    },
+    {
+      "name": "alvo",
+      "tipo": "variavel",
+      "direcao": "entrada",
+      "label": "Alvo"
+    },
+    {
+      "name": "metodo",
+      "tipo": "string",
+      "direcao": "entrada",
+      "label": "Método"
+    },
+    {
+      "name": "argumentos",
+      "tipo": "expressao",
+      "direcao": "entrada",
+      "label": "Argumentos"
+    }
+  ],
+  "imports": [
+    {
+      "local": "authenticator",
+      "source": "otplib"
+    },
+    {
+      "local": "qrCode",
+      "source": "qrcode"
+    }
+  ],
+  "template": "const {{variavel}} = authenticator.generateSecret();",
+  "pattern": {
+    "kind": "call",
+    "objectMatch": "^(authenticator|qrCode)$",
+    "methodMatch": "^(generateSecret|generate|generateURI|verify|toDataURL)$"
+  },
+  "containers": []
+}

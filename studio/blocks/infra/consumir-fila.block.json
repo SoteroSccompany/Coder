@@ -1,0 +1,44 @@
+{
+  "id": "infra.consumir-fila",
+  "label": "Consumir fila",
+  "categoria": "infra",
+  "icone": "inbox",
+  "priority": 66,
+  "geracao": "chamada",
+  "slots": [
+    {
+      "name": "variavel",
+      "tipo": "variavel",
+      "direcao": "saida",
+      "label": "Destino"
+    },
+    {
+      "name": "alvo",
+      "tipo": "variavel",
+      "direcao": "entrada",
+      "label": "Cliente",
+      "padrao": "rabbitMQ"
+    },
+    {
+      "name": "metodo",
+      "tipo": "string",
+      "direcao": "entrada",
+      "label": "Método",
+      "padrao": "consumeMessage"
+    },
+    {
+      "name": "argumentos",
+      "tipo": "expressao",
+      "direcao": "entrada",
+      "label": "Fila"
+    }
+  ],
+  "imports": [],
+  "template": "await {{alvo}}.consumeMessage({{argumentos}});",
+  "pattern": {
+    "kind": "call",
+    "await": true,
+    "methodName": "consumeMessage"
+  },
+  "containers": []
+}

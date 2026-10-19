@@ -1,0 +1,13 @@
+node_modules/
+dist/
+coverage/
+*.log
+.DS_Store
+.env
+.env.*
+!.env.example
+# metadados locais do Studio (estado por usuario, nao compartilhavel)
+.studio-local/
+*.tmp
+# recentes do servidor (fase projects) — estado local, nao versionar
+server/data/recentes.json

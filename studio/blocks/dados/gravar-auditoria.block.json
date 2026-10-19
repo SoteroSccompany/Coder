@@ -1,0 +1,54 @@
+{
+  "id": "dados.gravar-auditoria",
+  "label": "Gravar auditoria ledger",
+  "categoria": "dados",
+  "icone": "audit",
+  "priority": 95,
+  "slots": [
+    {
+      "name": "variavel",
+      "tipo": "variavel",
+      "direcao": "saida",
+      "label": "Variável"
+    },
+    {
+      "name": "ledger",
+      "tipo": "string",
+      "direcao": "entrada",
+      "label": "Ledger"
+    },
+    {
+      "name": "argumento",
+      "tipo": "expressao",
+      "direcao": "entrada",
+      "label": "Argumento"
+    },
+    {
+      "name": "inicial",
+      "tipo": "expressao",
+      "direcao": "entrada",
+      "label": "Estado anterior"
+    },
+    {
+      "name": "metodo",
+      "tipo": "string",
+      "direcao": "entrada",
+      "label": "Método"
+    },
+    {
+      "name": "payload",
+      "tipo": "expressao",
+      "direcao": "entrada",
+      "label": "Payload"
+    }
+  ],
+  "imports": [],
+  "template": "const {{variavel}} = new {{ledger}}({{argumento}});\nawait {{variavel}}.{{metodo}}({{payload}});",
+  "templates": {
+    "com-initialize": "const {{variavel}} = new {{ledger}}({{argumento}});\n{{variavel}}.Initialize({{inicial}});\nawait {{variavel}}.{{metodo}}({{payload}});"
+  },
+  "pattern": {
+    "kind": "ledger"
+  },
+  "containers": []
+}

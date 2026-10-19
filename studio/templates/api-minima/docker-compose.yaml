@@ -1,0 +1,25 @@
+name: {{slug}}
+
+services:
+  api:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: {{slug}}-api
+    restart: unless-stopped
+    ports:
+      - "{{port}}:{{port}}"
+    environment:
+      PORT: "{{port}}"
+      TZ: America/Sao_Paulo
+    env_file:
+      - .env
+    volumes:
+      - .:/app
+      - /app/node_modules
+    networks:
+      - {{slug}}
+
+networks:
+  {{slug}}:
+    driver: bridge

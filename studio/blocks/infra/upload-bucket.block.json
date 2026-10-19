@@ -1,0 +1,50 @@
+{
+  "id": "infra.upload-bucket",
+  "label": "Upload no bucket",
+  "categoria": "infra",
+  "icone": "upload",
+  "priority": 60,
+  "geracao": "chamada",
+  "slots": [
+    {
+      "name": "variavel",
+      "tipo": "variavel",
+      "direcao": "saida",
+      "label": "Variável"
+    },
+    {
+      "name": "alvo",
+      "tipo": "variavel",
+      "direcao": "entrada",
+      "label": "Alvo"
+    },
+    {
+      "name": "metodo",
+      "tipo": "string",
+      "direcao": "entrada",
+      "label": "Método"
+    },
+    {
+      "name": "argumentos",
+      "tipo": "expressao",
+      "direcao": "entrada",
+      "label": "Argumentos"
+    }
+  ],
+  "imports": [],
+  "template": "const {{variavel}} = await {{alvo}}.urlUploadPut({{argumentos}});",
+  "pattern": [
+    {
+      "kind": "call",
+      "methodName": "urlUploadPut",
+      "geracao": "chamada"
+    },
+    {
+      "kind": "call",
+      "objectMatch": "^bucket",
+      "methodMatch": "^(urlUploadPut|urlDownloadGet|obterArquivo|obterArquivoBase64|validarImagem|validarMagicPdf|remove)$",
+      "geracao": "chamada"
+    }
+  ],
+  "containers": []
+}

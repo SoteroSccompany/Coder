@@ -1,0 +1,346 @@
+
+
+services:
+  dbsignature:
+    image: mysql:8.4.2
+    command:
+      - mysqld
+      - --innodb-use-native-aio=0
+      - --sql-mode=ONLY_FULL_GROUP_BY,STRICT_TRANS_TABLES,ERROR_FOR_DIVISION_BY_ZERO,NO_ENGINE_SUBSTITUTION
+    container_name: "${DB_HOST}"
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: "${DB_PASS}"
+      MYSQL_DATABASE: "${DB_DATABASE}"
+      MYSQL_USER: "${DB_USER}"
+      MYSQL_PASSWORD: "${DB_PASS_USER}"
+    tty: true
+    ports:
+      - "3306:${DB_PORT}"
+    volumes:
+      - ./.docker/mysql:/var/lib/mysql
+    networks:
+      - legacysignaturenetwork
+    labels:
+      - "logging=promtail"
+
+  redissignature:
+    container_name: "${REDIS_HOST}"
+    image: redis:7.2.1-alpine
+    restart: always
+    ports:
+      - "${REDIS_PORT}"
+    command: redis-server /data/redis.conf
+    volumes:
+      - ./redis/redis.conf:/data/redis.conf
+      - ./.docker/redis-data/logs:/var/log/redis
+    networks:
+      - legacysignaturenetwork
+    labels:
+      - "logging=promtail"
+
+  rabbitmqsignature:
+    build:
+      context: ./rabbitmq
+      dockerfile: Dockerfile
+    container_name: "${RABBITMQ_HOST}"
+    ports:
+      - "${RABBITMQ_PORT}"
+      - "${RABBITMQ_WEB_PORT}:${RABBITMQ_WEB_PORT}"
+    environment:
+      RABBITMQ_DEFAULT_USER: ${RABBITMQ_DEFAULT_USER}
+      RABBITMQ_DEFAULT_PASS: ${RABBITMQ_DEFAULT_PASS}
+      RABBITMQ_DEFAULT_VHOST: ${RABBITMQ_DEFAULT_VHOST}
+      RABBITMQ_ERLANG_COOKIE: ${RABBITMQ_EARLANG_COOKIE}
+    restart: always
+    volumes:
+      - ".docker/rabbitmq_data:/var/lib/rabbitmq"
+    networks:
+      - legacysignaturenetwork
+    depends_on:
+      - "${DB_HOST}"
+    labels:
+      - "logging=promtail"
+
+  facematch:
+    build:
+      context: ./face-match
+      dockerfile: Dockerfile
+    container_name: facematch
+    restart: always
+    environment:
+      - TZ=America/Sao_Paulo
+      - FACE_MODEL_PACK=${FACE_MODEL_PACK}
+    ports:
+      - "${FACE_PORT}:${FACE_PORT}"
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://127.0.0.1:${FACE_PORT}/health')"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+      start_period: 25s
+    networks:
+      - legacysignaturenetwork
+    labels:
+      - "logging=promtail"
+
+  apisignature:
+    build:
+      context: ./api
+      dockerfile: Dockerfile
+    environment:
+      - TZ=America/Sao_Paulo
+    container_name: "${API_HOST}"
+    restart: always
+    ports:
+      - "${API_PORT}"
+    networks:
+      - legacysignaturenetwork
+      - storagesignatureexperts
+    tty: true
+    volumes:
+      - ./api:/app
+      - /app/node_modules
+    depends_on:
+      - "${DB_HOST}"
+      - "${REDIS_HOST}"
+      - "${RABBITMQ_HOST}"
+      - facematch
+    labels:
+      - "logging=promtail"
+
+  addonservice:
+    build:
+      context: ./addon-service
+      dockerfile: Dockerfile
+    # KEY_API do proxy — o mesmo JWT que proxy/certs monta em `apikey: Bearer …`.
+    # Sem isso o authApi da API recusa o API_KEY da raiz (403 Unauthorizeds).
+    env_file:
+      - ./proxy/.env
+    environment:
+      - TZ=America/Sao_Paulo
+      - APP_STATUS=development
+      - ADDON_PORT=7810
+      - APLICATION_NAME=addon-service
+      - DB_CLIENT=mysql2
+      - DB_HOST=${DB_HOST}
+      - DB_PORT=${DB_PORT}
+      - DB_USER=root
+      - DB_PASS=${DB_PASS}
+      - DB_DATABASE=addonservice
+      - RUN_MIGRATIONS=true
+      - REDIS_HOST=${REDIS_HOST}
+      - REDIS_PORT=${REDIS_PORT}
+      - LEGACY_API_URL=http://${API_HOST}:9366
+      # URL presignada do bucket vem como localhost:7749 (browser). Daqui
+      # reescreve pra este host na rede Docker — ver ApiLegacy#urlBucketNaRedeDocker.
+      - PROXY_HOST=${PROXY_HOST}
+      - PROXY_PORT=${PROXY_PORT}
+      - SHA=${ADDON_SHA:-dev-sha-addon-service-trocar-em-prod}
+      - ADMIN_TOKEN=${ADDON_ADMIN_TOKEN:-dev-admin-token}
+      # http: o site local não sobe em TLS. Para onboarding visto pelo Google, use ADDON_URLSITE com a URL pública.
+      - URLSITE=${ADDON_URLSITE:-http://localhost:${FRONT_END_PORT}}
+      # WEBAPP_URL e GOOGLE_* não entram aqui: o compose interpolaria vazio e
+      # apagaria o valor do addon-service/.env. Coloque WEBAPP_URL, GOOGLE_SA_*
+      # e GOOGLE_OAUTH_* só no addon-service/.env.
+    container_name: addonservice
+    restart: always
+    # Sem porta publicada no host: a request só chega via proxysignature (/addon).
+    networks:
+      - legacysignaturenetwork
+    tty: true
+    volumes:
+      - ./addon-service:/app
+      - /app/node_modules
+    depends_on:
+      - "${DB_HOST}"
+      - "${REDIS_HOST}"
+      - "${API_HOST}"
+    labels:
+      - "logging=promtail"
+
+  proxysignature:
+    build:
+      context: ./proxy
+      dockerfile: Dockerfile
+    environment:
+      - TZ=America/Sao_Paulo
+    container_name: "${PROXY_HOST}"
+    restart: always
+    ports:
+      - "${PROXY_PORT}:${PROXY_PORT}"
+    networks:
+      - legacysignaturenetwork
+      - storagesignatureexperts
+    tty: true
+    volumes:
+      - ./proxy:/app
+      - ./pdf:/app/public-tools
+      - /app/node_modules
+    labels:
+      - "logging=promtail"
+
+  phpmyadmin:
+    image: phpmyadmin
+    container_name: phpmyadmin
+    restart: always
+    ports:
+      - "8081:80"
+    environment:
+      PMA_HOST: "${DB_HOST}"
+      MYSQL_ROOT_PASSWORD: "${DB_PASS}"
+    networks:
+      - legacysignaturenetwork
+    depends_on:
+      - "${DB_HOST}"
+
+  # Mailpit — SMTP de desenvolvimento (captura e-mails; UI em MAILPIT_UI_PORT)
+  mailpitsignature:
+    image: axllent/mailpit:latest
+    container_name: "${MAILPIT_HOST}"
+    restart: always
+    environment:
+      TZ: America/Sao_Paulo
+      MP_MAX_MESSAGES: 5000
+      MP_DATABASE: /data/mailpit.db
+      MP_UI_AUTH: "${MAILPIT_UI_USER}:${MAILPIT_UI_PASS}"
+      MP_SMTP_AUTH: "${MAILPIT_SMTP_USER}:${MAILPIT_SMTP_PASS}"
+      MP_SMTP_AUTH_ALLOW_INSECURE: 1
+    ports:
+      - "${MAILPIT_UI_PORT}:8025"
+      - "${MAILPIT_SMTP_PORT}:1025"
+    volumes:
+      - ./.docker/mailpit:/data
+    networks:
+      - legacysignaturenetwork
+    labels:
+      - "logging=promtail"
+
+  frontsignature:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    container_name: "${FRONTEND_HOST}"
+    restart: always
+    ports:
+      - "${FRONT_END_PORT}:${FRONT_END_PORT}"
+    networks:
+      - legacysignaturenetwork
+    tty: true
+    volumes:
+      - ./frontend:/app
+      - /app/node_modules
+    depends_on:
+      - "${DB_HOST}"
+      - "${REDIS_HOST}"
+      - "${API_HOST}"
+      - "${PROXY_HOST}"
+    labels:
+      - "logging=promtail"
+
+  # Loki - Armazenamento de logs persistente
+  loki:
+    image: grafana/loki:2.9.2
+    container_name: loki
+    restart: always
+    ports:
+      - "3100:3100"
+    volumes:
+      - ./.docker/loki:/loki
+      - ./loki/loki-config.yaml:/etc/loki/local-config.yaml
+    command: -config.file=/etc/loki/local-config.yaml
+    networks:
+      - legacysignaturenetwork
+
+  # Promtail - Coletor de logs dos containers
+  promtail:
+    image: grafana/promtail:3.6.11
+    container_name: promtail
+    restart: always
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+      - ./promtail/promtail-config.yaml:/etc/promtail/config.yml
+      - ./.docker/promtail:/tmp
+    command: -config.file=/etc/promtail/config.yml
+    networks:
+      - legacysignaturenetwork
+    depends_on:
+      - loki
+
+  # Grafana - Visualização de logs e dashboards
+  grafana:
+    image: grafana/grafana:10.2.2
+    container_name: grafana
+    restart: always
+    ports:
+      - "3328:3000"
+    environment:
+      - GF_SECURITY_ADMIN_USER=${GF_USER}
+      - GF_SECURITY_ADMIN_PASSWORD=${GF_PASS}
+      - GF_USERS_ALLOW_SIGN_UP=false
+      - GF_SERVER_ROOT_URL=http://localhost:3000
+      - GF_INSTALL_PLUGINS=yesoreyeram-infinity-datasource
+      - API_KEY=${API_KEY}
+    volumes:
+      - ./.docker/grafana:/var/lib/grafana
+      - ./grafana/provisioning:/etc/grafana/provisioning
+    networks:
+      - legacysignaturenetwork
+    depends_on:
+      - loki
+
+  # Coder Studio (profile studio). Sem `networks`: ficam na rede default do compose.
+  # O arquivo ainda declara redes external; um compose so do studio esta no README.
+  studioserver:
+    profiles:
+      - studio
+    build:
+      context: ./studio/server
+      dockerfile: Dockerfile
+    container_name: studioserver
+    restart: unless-stopped
+    ports:
+      - "127.0.0.1:7900:7900"
+    environment:
+      TZ: America/Sao_Paulo
+      STUDIO_WORKSPACE: /workspace
+      STUDIO_SERVER_PORT: "7900"
+      STUDIO_HOST: 0.0.0.0
+      STUDIO_PROJECTS: /workspace/api
+      STUDIO_WATCH_POLLING: "true"
+    working_dir: /app
+    volumes:
+      - ./:/workspace
+      - ./studio/blocks:/workspace/studio/blocks
+      - ./studio/server:/app
+      - /app/node_modules
+
+  studioui:
+    profiles:
+      - studio
+    build:
+      context: ./studio/ui
+      dockerfile: Dockerfile
+    container_name: studioui
+    restart: unless-stopped
+    ports:
+      - "127.0.0.1:7901:7901"
+    environment:
+      TZ: America/Sao_Paulo
+      STUDIO_SERVER_URL: http://studioserver:7900
+      STUDIO_UI_PORT: "7901"
+      STUDIO_WATCH_POLLING: "true"
+    working_dir: /app
+    volumes:
+      - ./studio/ui:/app
+      - /app/node_modules
+    depends_on:
+      - studioserver
+
+networks:
+  legacysignaturenetwork:
+    name: legacysignaturenetwork
+    driver: bridge
+    external: true
+  storagesignatureexperts:
+    external: true

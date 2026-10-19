@@ -1,0 +1,36 @@
+{
+  "id": "dados.instanciar-domain",
+  "label": "Instanciar domain",
+  "categoria": "dados",
+  "icone": "box",
+  "priority": 48,
+  "geracao": "new",
+  "slots": [
+    {
+      "name": "variavel",
+      "tipo": "variavel",
+      "direcao": "saida",
+      "label": "Variável"
+    },
+    {
+      "name": "classe",
+      "tipo": "string",
+      "direcao": "entrada",
+      "label": "Classe",
+      "padrao": "domain"
+    },
+    {
+      "name": "argumentos",
+      "tipo": "expressao",
+      "direcao": "entrada",
+      "label": "Argumentos"
+    }
+  ],
+  "imports": [],
+  "template": "const {{variavel}} = new {{classe}}({{argumentos}});",
+  "pattern": {
+    "kind": "new",
+    "ctorMatch": "^domain"
+  },
+  "containers": []
+}

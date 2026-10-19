@@ -1,0 +1,19 @@
+{
+  "id": "livre.comentario",
+  "label": "Comentário",
+  "categoria": "livre",
+  "icone": "comment",
+  "priority": 0,
+  "slots": [
+    {
+      "name": "texto",
+      "tipo": "string",
+      "direcao": "entrada",
+      "label": "Texto"
+    }
+  ],
+  "imports": [],
+  "template": "// {{texto}}",
+  "pattern": null,
+  "containers": []
+}

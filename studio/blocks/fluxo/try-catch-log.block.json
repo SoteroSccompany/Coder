@@ -1,0 +1,47 @@
+{
+  "id": "fluxo.try-catch-log",
+  "label": "Try/Catch com logExeption",
+  "categoria": "fluxo",
+  "icone": "alert",
+  "priority": 110,
+  "slots": [
+    {
+      "name": "erro",
+      "tipo": "variavel",
+      "direcao": "entrada",
+      "label": "Erro",
+      "padrao": "err"
+    },
+    {
+      "name": "descricao",
+      "tipo": "expressao",
+      "direcao": "entrada",
+      "label": "Descrição",
+      "padrao": "'erro'"
+    }
+  ],
+  "imports": [
+    {
+      "local": "ErrorStackParser",
+      "source": "error-stack-parser"
+    },
+    {
+      "local": "logExeption",
+      "source": "../Logs/exeption/exeptionDesafioAutenticacao"
+    },
+    {
+      "local": "dateNow",
+      "source": "../../../infrastructure/gateways/functions/data/getToday"
+    }
+  ],
+  "template": "try {\n{{#corpo}}\n} catch ({{erro}}) {\n    console.log({{erro}})\n    let lineError = '0';\n    let fileName = '0';\n    const stackFrames = ErrorStackParser.parse({{erro}});\n    if (stackFrames.length > 0) {\n        lineError = stackFrames[0].lineNumber;\n        fileName = stackFrames[0].fileName;\n    }\n    logExeption({ descricaoDoErro: {{descricao}}, linhaDoErro: lineError, nomeDoArquivo: fileName, data_criacao: dateNow(), data_atualizacao: dateNow(), deletado: false })\n    return { status: false, msg: 'Erro interno do servidor, log gerado' }\n}",
+  "pattern": {
+    "kind": "try-log"
+  },
+  "containers": [
+    {
+      "name": "corpo",
+      "label": "Tentar"
+    }
+  ]
+}

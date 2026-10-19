@@ -1,0 +1,33 @@
+{
+  "id": "fluxo.se-senao",
+  "label": "Se / Senão",
+  "categoria": "fluxo",
+  "icone": "branch",
+  "priority": 40,
+  "slots": [
+    {
+      "name": "condicao",
+      "tipo": "expressao",
+      "direcao": "entrada",
+      "label": "Condição"
+    }
+  ],
+  "imports": [],
+  "template": "if ({{condicao}}) {\n{{#entao}}\n} else {\n{{#senao}}\n}",
+  "templates": {
+    "se": "if ({{condicao}}) {\n{{#entao}}\n}"
+  },
+  "pattern": {
+    "kind": "if-else"
+  },
+  "containers": [
+    {
+      "name": "entao",
+      "label": "Então"
+    },
+    {
+      "name": "senao",
+      "label": "Senão"
+    }
+  ]
+}

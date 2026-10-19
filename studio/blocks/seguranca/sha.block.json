@@ -1,0 +1,66 @@
+{
+  "id": "seguranca.sha",
+  "label": "SHA encrypt/hash",
+  "categoria": "seguranca",
+  "icone": "lock",
+  "priority": 70,
+  "slots": [
+    {
+      "name": "variavel",
+      "tipo": "variavel",
+      "direcao": "saida",
+      "label": "Variável"
+    },
+    {
+      "name": "argumentos",
+      "tipo": "expressao",
+      "direcao": "entrada",
+      "label": "Argumentos"
+    },
+    {
+      "name": "alvo",
+      "tipo": "variavel",
+      "direcao": "entrada",
+      "label": "Instância",
+      "padrao": "sha"
+    },
+    {
+      "name": "metodo",
+      "tipo": "enum",
+      "direcao": "entrada",
+      "label": "Operação",
+      "opcoes": [
+        "encrypt",
+        "hash",
+        "decrypt"
+      ],
+      "padrao": "encrypt"
+    }
+  ],
+  "imports": [
+    {
+      "local": "SHA",
+      "source": "../../../infrastructure/gateways/crypt/sha",
+      "destructure": [
+        "SHA"
+      ]
+    }
+  ],
+  "template": "const {{variavel}} = new SHA({{argumentos}});",
+  "pattern": [
+    {
+      "kind": "new",
+      "ctorName": "SHA",
+      "variant": "instancia",
+      "geracao": "new"
+    },
+    {
+      "kind": "call",
+      "await": false,
+      "objectMatch": "^sha$",
+      "methodMatch": "^(encrypt|hash|decrypt)$",
+      "geracao": "chamada"
+    }
+  ],
+  "containers": []
+}

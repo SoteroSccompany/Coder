@@ -1,0 +1,4 @@
+PORT={{port}}
+RABBITMQ_URL=
+QUEUE_NAME={{queueName}}
+RABBITMQ_PORT={{rabbitPort}}

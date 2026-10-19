@@ -1,0 +1,103 @@
+{
+  "name": "Login",
+  "runtime": "node",
+  "entry": "index.js",
+  "port": 3210,
+  "template": "api-clean",
+  "createdAt": "2026-10-19T20:40:39.665Z",
+  "archived": false,
+  "layers": {
+    "domain": {
+      "path": "@core/domain",
+      "editor": "domain-form",
+      "file": "{Entity}.js"
+    },
+    "usecase": {
+      "path": "@core/usecase/{Entity}",
+      "editor": "blocks",
+      "file": "{action}{Entity}UseCase.js"
+    },
+    "repository": {
+      "path": "infrastructure/db/services",
+      "editor": "text",
+      "file": "{Entity}Repository.js"
+    },
+    "controller": {
+      "path": "infrastructure/Controllers",
+      "editor": "text",
+      "file": "{Entity}Controller.js"
+    },
+    "routes": {
+      "path": "infrastructure/routes",
+      "editor": "text",
+      "file": "{entity}.js"
+    },
+    "worker": {
+      "path": "infrastructure/queue/workers",
+      "editor": "text",
+      "file": "{name}Worker.js"
+    },
+    "migration": {
+      "path": "knex/migrations",
+      "editor": "text",
+      "file": "{timestamp}_{snake}.js"
+    },
+    "gateway": {
+      "path": "infrastructure/gateways",
+      "editor": "text",
+      "file": "{Name}/index.js"
+    }
+  },
+  "naming": {
+    "entity": "{Entity}",
+    "table": "tab_{snake}",
+    "controller": "{Entity}Controller.js",
+    "useCase": "{action}{Entity}UseCase.js",
+    "repository": "{Entity}Repository.js",
+    "domain": "{Entity}.js"
+  },
+  "fileTemplates": {
+    "domain": "class {{Entity}} {\n  constructor(dados = {}) {\n    Object.assign(this, dados);\n  }\n}\nmodule.exports = {{Entity}};\n",
+    "usecase": "class {{action}}{{Entity}}UseCase {\n  async executar(input) {\n    if (!input) return { status: false, msg: \"Dados obrigatorios\" };\n    return { status: true, msg: \"ok\" };\n  }\n}\nmodule.exports = {{action}}{{Entity}}UseCase;\n",
+    "repository": "class {{Entity}}Repository {\n  async listar() {\n    return [];\n  }\n}\nmodule.exports = new {{Entity}}Repository();\n",
+    "controller": "class {{Entity}}Controller {\n  async index(req, res) {\n    res.json({ status: true });\n  }\n}\nmodule.exports = new {{Entity}}Controller();\n"
+  },
+  "services": {
+    "mysql": {
+      "enabled": true,
+      "port": 3306,
+      "database": "teste",
+      "user": "app",
+      "host": "mysql"
+    },
+    "redis": {
+      "enabled": false,
+      "port": 6379,
+      "host": "redis"
+    },
+    "rabbitmq": {
+      "enabled": false,
+      "port": 5672,
+      "managementPort": 15672,
+      "host": "rabbitmq",
+      "user": "app"
+    },
+    "mailpit": {
+      "enabled": false,
+      "smtpPort": 1025,
+      "uiPort": 8025,
+      "host": "mailpit"
+    }
+  },
+  "blocks": [
+    "core",
+    ".studio/blocks"
+  ],
+  "ignore": [
+    ".env",
+    "security",
+    "Logs",
+    "node_modules",
+    ".git"
+  ]
+}

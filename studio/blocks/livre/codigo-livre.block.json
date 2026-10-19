@@ -1,0 +1,19 @@
+{
+  "id": "livre.codigo-livre",
+  "label": "Código livre",
+  "categoria": "livre",
+  "icone": "code",
+  "priority": 0,
+  "slots": [
+    {
+      "name": "codigo",
+      "tipo": "codigo",
+      "direcao": "entrada",
+      "label": "Código"
+    }
+  ],
+  "imports": [],
+  "template": "{{codigo}}",
+  "pattern": null,
+  "containers": []
+}

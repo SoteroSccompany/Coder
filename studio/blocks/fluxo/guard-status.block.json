@@ -1,0 +1,27 @@
+{
+  "id": "fluxo.guard-status",
+  "label": "Guard de status",
+  "categoria": "fluxo",
+  "icone": "shield",
+  "priority": 80,
+  "slots": [
+    {
+      "name": "alvo",
+      "tipo": "expressao",
+      "direcao": "entrada",
+      "label": "Alvo"
+    },
+    {
+      "name": "msg",
+      "tipo": "expressao",
+      "direcao": "entrada",
+      "label": "Mensagem"
+    }
+  ],
+  "imports": [],
+  "template": "if (!{{alvo}}.status) return { status: false, msg: {{msg}} }",
+  "pattern": {
+    "kind": "guard"
+  },
+  "containers": []
+}

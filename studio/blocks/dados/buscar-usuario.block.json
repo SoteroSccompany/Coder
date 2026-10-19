@@ -1,0 +1,36 @@
+{
+  "id": "dados.buscar-usuario",
+  "label": "Buscar usuário",
+  "categoria": "dados",
+  "icone": "user",
+  "priority": 85,
+  "geracao": "chamada",
+  "slots": [
+    {
+      "name": "variavel",
+      "tipo": "variavel",
+      "direcao": "saida",
+      "label": "Variável"
+    },
+    {
+      "name": "argumentos",
+      "tipo": "expressao",
+      "direcao": "entrada",
+      "label": "Argumentos"
+    }
+  ],
+  "imports": [
+    {
+      "local": "GetUserUsecase",
+      "source": "../Usuario/getUsuario"
+    }
+  ],
+  "template": "const {{variavel}} = await GetUserUsecase.getById({{argumentos}});",
+  "pattern": {
+    "kind": "call",
+    "await": true,
+    "objectName": "GetUserUsecase",
+    "methodName": "getById"
+  },
+  "containers": []
+}

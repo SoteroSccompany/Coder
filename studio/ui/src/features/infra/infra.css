@@ -1,0 +1,9 @@
+.inf { display: flex; flex-direction: column; height: 100%; min-height: 0; }
+.inf-bar { display: flex; gap: 6px; align-items: center; padding: 4px 8px; flex-wrap: wrap; border-bottom: 1px solid var(--border); }
+.inf-ghost { background: var(--bg3); }
+.inf-catalogo { display: flex; gap: 6px; overflow: auto; padding: 4px 8px; }
+.inf-card { background: var(--bg); border: 1px solid var(--border); padding: 4px 6px; min-width: 140px; }
+.inf-card strong { display: block; }
+.inf-card span, .inf-msg { color: var(--muted); font-size: 11px; }
+.inf-msg.erro { color: var(--err); }
+.inf-out { flex: 1; margin: 0; overflow: auto; padding: 6px 8px; font-family: Menlo, Consolas, monospace; font-size: 11px; white-space: pre-wrap; }

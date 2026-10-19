@@ -1,0 +1,41 @@
+{
+  "id": "infra.enviar-email",
+  "label": "Enviar e-mail",
+  "categoria": "infra",
+  "icone": "mail",
+  "priority": 62,
+  "geracao": "chamada",
+  "slots": [
+    {
+      "name": "variavel",
+      "tipo": "variavel",
+      "direcao": "saida",
+      "label": "Variável"
+    },
+    {
+      "name": "alvo",
+      "tipo": "variavel",
+      "direcao": "entrada",
+      "label": "Alvo"
+    },
+    {
+      "name": "metodo",
+      "tipo": "string",
+      "direcao": "entrada",
+      "label": "Método"
+    },
+    {
+      "name": "argumentos",
+      "tipo": "expressao",
+      "direcao": "entrada",
+      "label": "Argumentos"
+    }
+  ],
+  "imports": [],
+  "template": "await {{alvo}}.{{metodo}}({{argumentos}});",
+  "pattern": {
+    "kind": "call",
+    "methodMatch": "^(sendEmail|enviarEmail)"
+  },
+  "containers": []
+}

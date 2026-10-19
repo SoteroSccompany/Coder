@@ -1,0 +1,52 @@
+{
+  "id": "dados.transacao-knex",
+  "label": "Transação knex",
+  "categoria": "dados",
+  "icone": "transaction",
+  "priority": 100,
+  "slots": [
+    {
+      "name": "trx",
+      "tipo": "variavel",
+      "direcao": "saida",
+      "label": "Transação",
+      "padrao": "trx"
+    },
+    {
+      "name": "erro",
+      "tipo": "variavel",
+      "direcao": "entrada",
+      "label": "Erro",
+      "padrao": "error"
+    }
+  ],
+  "imports": [
+    {
+      "local": "knex",
+      "source": "../../../infrastructure/db/config/databaseConection",
+      "invoke": true
+    }
+  ],
+  "template": "const {{trx}} = await knex.transaction();\ntry {\n{{#corpo}}\n    await {{trx}}.commit();\n{{#depois}}\n} catch ({{erro}}) {\n{{#antesRollback}}\n    await {{trx}}.rollback();\n{{#catch}}\n}",
+  "pattern": {
+    "kind": "transaction"
+  },
+  "containers": [
+    {
+      "name": "corpo",
+      "label": "Antes do commit"
+    },
+    {
+      "name": "depois",
+      "label": "Depois do commit"
+    },
+    {
+      "name": "antesRollback",
+      "label": "Antes do rollback"
+    },
+    {
+      "name": "catch",
+      "label": "Depois do rollback"
+    }
+  ]
+}

@@ -1,0 +1,40 @@
+{
+  "id": "infra.publicar-fila",
+  "label": "Publicar na fila RabbitMQ",
+  "categoria": "infra",
+  "icone": "queue",
+  "priority": 90,
+  "slots": [
+    {
+      "name": "variavel",
+      "tipo": "variavel",
+      "direcao": "saida",
+      "label": "Variável",
+      "padrao": "dispatcher"
+    },
+    {
+      "name": "argumentos",
+      "tipo": "expressao",
+      "direcao": "entrada",
+      "label": "Construtor",
+      "padrao": "rabbit, []"
+    },
+    {
+      "name": "item",
+      "tipo": "expressao",
+      "direcao": "entrada",
+      "label": "Item"
+    }
+  ],
+  "imports": [
+    {
+      "local": "MessageDispatcher",
+      "source": "../../../infrastructure/gateways/helpers/dispatchers/Messages/index.js"
+    }
+  ],
+  "template": "const {{variavel}} = new MessageDispatcher({{argumentos}});\n{{variavel}}.addItem({{item}});\nawait {{variavel}}.dispatch();",
+  "pattern": {
+    "kind": "publish"
+  },
+  "containers": []
+}

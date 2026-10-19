@@ -1,0 +1,62 @@
+:root {
+  --bg: #1e1e1e; --bg2: #252526; --bg3: #2d2d30; --fg: #cccccc; --muted: #8a8a8a;
+  --accent: #0e639c; --border: #3c3c3c; --ok: #4ec9b0; --warn: #d7ba7d; --err: #f48771;
+}
+* { box-sizing: border-box; }
+html, body, #root { height: 100%; margin: 0; }
+body { background: var(--bg); color: var(--fg); font: 13px/1.4 -apple-system, "Segoe UI", sans-serif; }
+button { background: var(--accent); color: #fff; border: 0; padding: 4px 10px; border-radius: 3px; cursor: pointer; font-size: 12px; }
+button:hover { filter: brightness(1.15); }
+.muted { color: var(--muted); }
+
+.app { display: grid; grid-template-rows: 36px 1fr auto; height: 100%; }
+.topbar { display: flex; align-items: center; gap: 12px; background: var(--bg3); border-bottom: 1px solid var(--border); padding: 0 12px; }
+.brand { font-weight: 600; }
+.project-tabs { display: flex; gap: 2px; flex: 1; overflow-x: auto; }
+.project-tab { padding: 6px 14px; cursor: pointer; border-radius: 4px 4px 0 0; color: var(--muted); }
+.project-tab.active { background: var(--bg); color: var(--fg); }
+.conn { font-size: 11px; padding: 2px 8px; border-radius: 10px; background: var(--bg); }
+.conn-open { color: var(--ok); } .conn-closed { color: var(--err); } .conn-connecting { color: var(--warn); }
+
+.main { display: grid; grid-template-columns: 280px 1fr; min-height: 0; }
+.sidebar { background: var(--bg2); border-right: 1px solid var(--border); overflow: auto; }
+.center { min-width: 0; min-height: 0; display: flex; }
+
+.explorer-msg { padding: 12px; color: var(--muted); } .explorer-msg.error { color: var(--err); }
+.tree-section-title { padding: 4px 8px; font-weight: 600; text-transform: uppercase; font-size: 11px; letter-spacing: .04em; cursor: pointer; background: var(--bg3); position: sticky; top: 0; }
+.tree-section.dim .tree-section-title { color: var(--muted); font-weight: 400; }
+.tree-row { padding: 2px 8px; cursor: pointer; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.tree-row:hover { background: #2a2d2e; }
+.tree-row.dir { color: #dcdcaa; } .tree-row.file.active { background: #094771; }
+
+.editor-area { display: flex; flex-direction: column; flex: 1; min-width: 0; }
+.file-tabs { display: flex; background: var(--bg2); border-bottom: 1px solid var(--border); overflow-x: auto; align-items: stretch; }
+.file-tab { display: flex; align-items: center; gap: 6px; padding: 6px 10px; cursor: pointer; color: var(--muted); border-right: 1px solid var(--border); white-space: nowrap; }
+.file-tab.active { background: var(--bg); color: var(--fg); }
+.tab-close { background: transparent; color: var(--muted); padding: 0 4px; } .tab-close:hover { color: #fff; }
+.toggle-view { margin-left: auto; margin-right: 6px; align-self: center; background: var(--bg3); }
+.editor-body { flex: 1; min-height: 0; display: flex; }
+.editor-msg { margin: auto; color: var(--muted); } .editor-msg.error { color: var(--err); }
+
+.monaco-wrap { display: flex; flex-direction: column; flex: 1; min-width: 0; }
+.monaco-host { flex: 1; min-height: 0; }
+.statusbar { background: var(--accent); color: #fff; font-size: 11px; padding: 2px 10px; }
+.banner { display: flex; gap: 8px; align-items: center; padding: 6px 10px; flex-wrap: wrap; }
+.banner span { flex: 1; min-width: 200px; }
+.banner-error { background: #5a1d1d; } .banner-warn { background: #4d3b13; }
+
+.bottom { border-top: 1px solid var(--border); background: var(--bg2); height: 200px; display: flex; flex-direction: column; }
+.bottom.collapsed { height: auto; }
+.bottom-tabs { display: flex; align-items: center; background: var(--bg3); }
+.bottom-tab { padding: 4px 14px; cursor: pointer; color: var(--muted); font-size: 11px; text-transform: uppercase; }
+.bottom-tab.active { color: var(--fg); border-bottom: 1px solid var(--accent); }
+.bottom-toggle { margin-left: auto; background: transparent; color: var(--muted); }
+.bottom-body { flex: 1; min-height: 0; }
+.logs { display: flex; flex-direction: column; height: 100%; }
+.logs-toolbar { padding: 2px 8px; border-bottom: 1px solid var(--border); }
+.logs-lines { flex: 1; overflow: auto; padding: 4px 8px; font-family: Menlo, Consolas, monospace; font-size: 12px; }
+.log-ts { color: var(--muted); margin-right: 6px; } .log-src { color: var(--muted); }
+.log-warn { color: var(--warn); } .log-error { color: var(--err); }
+
+.token-gate { max-width: 320px; margin: 15vh auto; display: flex; flex-direction: column; gap: 10px; }
+.token-gate input { padding: 6px; background: var(--bg2); color: var(--fg); border: 1px solid var(--border); }

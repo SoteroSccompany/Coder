@@ -1,0 +1,15 @@
+PORT={{port}}
+DB_CLIENT=mysql2
+DB_HOST=mysql
+DB_PORT={{dbPort}}
+DB_USER=
+DB_PASS=
+DB_DATABASE={{database}}
+REDIS_HOST=redis
+REDIS_PORT={{redisPort}}
+RABBITMQ_HOST=rabbitmq
+RABBITMQ_PORT={{rabbitPort}}
+RABBITMQ_USER=
+RABBITMQ_PASSWORD=
+MAIL_HOST=mailpit
+MAIL_PORT={{mailpitSmtp}}

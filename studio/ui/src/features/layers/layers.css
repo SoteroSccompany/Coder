@@ -1,0 +1,17 @@
+.ly { display: flex; flex-direction: column; flex: 1; min-width: 0; min-height: 0; }
+.ly-bar, .ly-actions { display: flex; gap: 8px; align-items: center; padding: 8px 10px; border-bottom: 1px solid var(--border); flex-wrap: wrap; }
+.ly-ghost { background: var(--bg3); }
+.ly-body { flex: 1; overflow: auto; padding: 12px; display: flex; flex-direction: column; gap: 10px; }
+.ly h3 { margin: 0; font-size: 13px; }
+.ly label { display: flex; flex-direction: column; gap: 4px; font-size: 11px; color: var(--muted); }
+.ly input, .ly select { background: var(--bg); color: var(--fg); border: 1px solid var(--border); padding: 4px 6px; font: inherit; }
+.ly-row { display: flex; gap: 8px; align-items: end; }
+.ly-row > * { flex: 1; }
+.ly table { width: 100%; border-collapse: collapse; }
+.ly th, .ly td { text-align: left; padding: 4px 6px; border-bottom: 1px solid var(--border); font-size: 12px; }
+.ly .ly-danger { background: #5a1d1d; }
+.ly-msg { color: var(--muted); }
+.ly-msg.erro { color: var(--err); }
+.ly-msg.ok { color: var(--ok); }
+.ly details { background: var(--bg3); padding: 8px; border-radius: 4px; }
+.ly-colunas { display: flex; flex-direction: column; gap: 6px; }
