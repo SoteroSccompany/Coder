@@ -1,6 +1,8 @@
 {
   "id": "seguranca.bcrypt",
   "label": "Bcrypt",
+  "fala": "Criptografa com bcrypt em {{variavel}}",
+  "produz": ["variavel"],
   "categoria": "seguranca",
   "icone": "key",
   "priority": 68,

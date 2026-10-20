@@ -1,5 +1,5 @@
 import { useEffect, useState, type FormEvent, type ReactNode } from 'react';
-import { useStudio } from '../../state/store';
+import { studioActions, useStudio } from '../../state/store';
 import { errorMessage, projectsApi, type ImportDetection, type RecenteItem, type TemplateInfo } from './api';
 import { refreshProjects } from './api';
 import { projectUi, type HomeMode } from './uiState';
@@ -34,8 +34,9 @@ export function HomeScreen({ initialMode }: { initialMode: HomeMode }) {
     loadLists().catch((e) => setError(errorMessage(e)));
   }, []);
 
-  async function afterOpen(id: string) {
+  async function afterOpen(id: string, arquivo?: string) {
     await refreshProjects(id);
+    if (arquivo) studioActions.openFile(id, arquivo);
     projectUi.hideHome();
   }
 
@@ -178,7 +179,9 @@ function ItemList({
   );
 }
 
-function NewProject({ onCreated, onError }: { onCreated: (id: string) => Promise<void>; onError: (m: string) => void }) {
+const USECASE_EXEMPLO = '@core/usecase/Exemplo/indexExemploUseCase.js';
+
+function NewProject({ onCreated, onError }: { onCreated: (id: string, arquivo?: string) => Promise<void>; onError: (m: string) => void }) {
   const [templates, setTemplates] = useState<TemplateInfo[]>([]);
   const [template, setTemplate] = useState('api-minima');
   const [name, setName] = useState('');
@@ -240,7 +243,8 @@ function NewProject({ onCreated, onError }: { onCreated: (id: string) => Promise
         services,
         servicePorts,
       });
-      await onCreated(res.project.id);
+      const arquivo = template === 'api-minima' ? USECASE_EXEMPLO : undefined;
+      await onCreated(res.project.id, arquivo);
     } catch (e) {
       onError(errorMessage(e));
     } finally {

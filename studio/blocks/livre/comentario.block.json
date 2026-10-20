@@ -1,6 +1,7 @@
 {
   "id": "livre.comentario",
   "label": "Comentário",
+  "fala": "Nota: {{texto}}",
   "categoria": "livre",
   "icone": "comment",
   "priority": 0,

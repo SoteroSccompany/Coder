@@ -1,6 +1,8 @@
 {
   "id": "seguranca.otp-qrcode",
   "label": "Gerar OTP/QRCode",
+  "fala": "Gera o segredo OTP em {{variavel}}",
+  "produz": ["variavel"],
   "categoria": "seguranca",
   "icone": "qrcode",
   "priority": 75,

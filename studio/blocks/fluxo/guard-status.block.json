@@ -1,6 +1,7 @@
 {
   "id": "fluxo.guard-status",
   "label": "Guard de status",
+  "fala": "Se {{alvo}} não tiver status, devolve {{msg}}",
   "categoria": "fluxo",
   "icone": "shield",
   "priority": 80,

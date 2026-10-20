@@ -1,6 +1,7 @@
 {
   "id": "infra.enviar-email",
   "label": "Enviar e-mail",
+  "fala": "Envia o e-mail com {{alvo}}.{{metodo}}",
   "categoria": "infra",
   "icone": "mail",
   "priority": 62,

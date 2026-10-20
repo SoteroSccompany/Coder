@@ -1,6 +1,8 @@
 {
   "id": "infra.upload-bucket",
   "label": "Upload no bucket",
+  "fala": "Sobe o arquivo no bucket e guarda a URL em {{variavel}}",
+  "produz": ["variavel"],
   "categoria": "infra",
   "icone": "upload",
   "priority": 60,

@@ -1,6 +1,8 @@
 {
   "id": "dados.chamar-repositorio",
   "label": "Chamar repositório",
+  "fala": "Chama {{alvo}}.{{metodo}} e guarda em {{variavel}}",
+  "produz": ["variavel"],
   "categoria": "dados",
   "icone": "database",
   "priority": 50,

@@ -1,6 +1,7 @@
 {
   "id": "fluxo.try-catch-log",
   "label": "Try/Catch com logExeption",
+  "fala": "Tenta o trecho e registra {{erro}} se falhar",
   "categoria": "fluxo",
   "icone": "alert",
   "priority": 110,

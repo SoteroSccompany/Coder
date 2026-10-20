@@ -1,6 +1,7 @@
 {
   "id": "infra.cache-redis",
   "label": "Cache Redis",
+  "fala": "Acessa o Redis em {{alvo}}.{{metodo}}",
   "categoria": "infra",
   "icone": "cache",
   "priority": 64,

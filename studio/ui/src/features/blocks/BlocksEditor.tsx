@@ -1,4 +1,4 @@
-// Editor da camada usecase: canvas Blockly, Monaco ao lado e alternancia codigo | blocos.
+// Editor da camada usecase. O HUD de placas e a tela inicial; Malha abre o Blockly e Codigo o Monaco.
 // O Monaco padrao da fundacao continua acessivel pelo botao "Ver como texto" do cabecalho.
 
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
@@ -13,14 +13,15 @@ import { studioActions } from '../../state/store';
 import { criarBloco, listarBiblioteca, obterFluxo, salvarFluxo } from './api';
 import { caixaDeFerramentas, lerPilha, montarPilha, registrarBlocos } from './blocklyModel';
 import { CreateBlockDialog } from './CreateBlockDialog';
-import type { BlockDef, FlowResponse, ParamMarcado } from './types';
+import { HudView } from './hud/HudView';
+import type { BlockDef, FlowNode, FlowResponse, ParamMarcado } from './types';
 import './blocks.css';
 
-type Modo = 'blocos' | 'codigo';
+type Modo = 'hud' | 'malha' | 'codigo';
 
 export function BlocksEditor({ projectId, path }: EditorProps) {
   const doc = useFileDocument(projectId, path);
-  const [modo, setModo] = useState<Modo>('blocos');
+  const [modo, setModo] = useState<Modo>('hud');
   const [defs, setDefs] = useState<BlockDef[]>([]);
   const [fluxo, setFluxo] = useState<FlowResponse | null>(null);
   const [metodo, setMetodo] = useState('');
@@ -63,7 +64,7 @@ export function BlocksEditor({ projectId, path }: EditorProps) {
   }, [carregar]);
 
   useEffect(() => {
-    if (modo !== 'blocos' || status !== 'ready' || !hostRef.current) return undefined;
+    if (modo !== 'malha' || status !== 'ready' || !hostRef.current) return undefined;
     hidratando.current = true;
     registrarBlocos(defs);
     const ws = Blockly.inject(hostRef.current, {
@@ -88,7 +89,7 @@ export function BlocksEditor({ projectId, path }: EditorProps) {
 
   useEffect(() => {
     const ws = wsRef.current;
-    if (!ws || modo !== 'blocos') return;
+    if (!ws || modo !== 'malha') return;
     hidratando.current = true;
     ws.clear();
     if (atual) montarPilha(ws, atual.blocks);
@@ -115,7 +116,7 @@ export function BlocksEditor({ projectId, path }: EditorProps) {
       }
       setSalvando(true);
       try {
-        const blocks = sujoRef.current && wsRef.current ? lerPilha(wsRef.current, defsMap) : atual.blocks;
+        const blocks = modo === 'malha' && sujoRef.current && wsRef.current ? lerPilha(wsRef.current, defsMap) : atual.blocks;
         const res = await salvarFluxo(projectId, path, {
           method: atual.name,
           className: atual.className,
@@ -143,7 +144,7 @@ export function BlocksEditor({ projectId, path }: EditorProps) {
         setSalvando(false);
       }
     },
-    [fluxo, atual, doc.dirty, defsMap, projectId, path],
+    [fluxo, atual, doc.dirty, defsMap, projectId, path, modo],
   );
 
   const salvarRef = useRef(salvarBlocos);
@@ -173,6 +174,29 @@ export function BlocksEditor({ projectId, path }: EditorProps) {
   const aoMontarSelecao: OnMount = (editor) => {
     editorRef.current = editor;
   };
+
+  function mudarModo(proximo: Modo) {
+    if (modo === 'malha' && proximo !== 'malha' && sujoRef.current && wsRef.current && fluxo && atual) {
+      const blocks = lerPilha(wsRef.current, defsMap);
+      setFluxo({
+        ...fluxo,
+        methods: fluxo.methods.map((m) => (m.name === atual.name && m.className === atual.className ? { ...m, blocks } : m)),
+      });
+    }
+    setModo(proximo);
+  }
+
+  function gravarBlocosLocais(blocks: FlowNode[]) {
+    setFluxo((fl) => {
+      if (!fl || !atual) return fl;
+      return {
+        ...fl,
+        methods: fl.methods.map((m) => (m.name === atual.name && m.className === atual.className ? { ...m, blocks } : m)),
+      };
+    });
+    sujoRef.current = true;
+    setSujo(true);
+  }
 
   function transformarSelecao() {
     const editor = editorRef.current;
@@ -212,14 +236,17 @@ export function BlocksEditor({ projectId, path }: EditorProps) {
     <div className="blocks-editor">
       <div className="blocks-toolbar">
         <div className="blocks-toggle">
-          <button type="button" className={modo === 'blocos' ? 'ativo' : ''} onClick={() => setModo('blocos')}>
-            Blocos
+          <button type="button" className={modo === 'hud' ? 'ativo' : ''} onClick={() => mudarModo('hud')}>
+            HUD
           </button>
-          <button type="button" className={modo === 'codigo' ? 'ativo' : ''} onClick={() => setModo('codigo')}>
-            Codigo
+          <button type="button" className={modo === 'malha' ? 'ativo' : ''} onClick={() => mudarModo('malha')}>
+            Malha
+          </button>
+          <button type="button" className={modo === 'codigo' ? 'ativo' : ''} onClick={() => mudarModo('codigo')}>
+            Código
           </button>
         </div>
-        {modo === 'blocos' && (
+        {modo !== 'codigo' && (
           <select value={metodo} onChange={(e) => setMetodo(e.target.value)} aria-label="Metodo">
             {(fluxo?.methods || []).map((m) => (
               <option key={`${m.className || ''}.${m.name}`} value={m.name}>
@@ -233,12 +260,12 @@ export function BlocksEditor({ projectId, path }: EditorProps) {
         <button type="button" onClick={() => void (modo === 'codigo' ? doc.save() : salvarBlocos())} disabled={salvando || doc.saving}>
           {salvando || doc.saving ? 'Salvando...' : 'Salvar'}
         </button>
-        {modo === 'blocos' && (
+        {modo === 'malha' && (
           <button type="button" className="blocks-ghost" onClick={transformarSelecao}>
             Transformar selecao em bloco
           </button>
         )}
-        <span className="muted">{modo === 'blocos' ? (sujo ? 'Fluxo alterado' : 'Fluxo igual ao arquivo') : doc.dirty ? 'Codigo alterado' : 'Codigo salvo'}</span>
+        <span className="muted">{modo === 'codigo' ? (doc.dirty ? 'Codigo alterado' : 'Codigo salvo') : sujo ? 'Fluxo alterado' : 'Fluxo igual ao arquivo'}</span>
       </div>
 
       {modo === 'codigo' && doc.conflict && (
@@ -250,7 +277,7 @@ export function BlocksEditor({ projectId, path }: EditorProps) {
           <button type="button" onClick={() => void doc.overwrite()}>Sobrescrever com minha versao</button>
         </div>
       )}
-      {modo === 'blocos' && conflito && (
+      {modo !== 'codigo' && conflito && (
         <div className="banner banner-error" role="alert">
           <span>
             Conflito: <b>{path}</b> mudou no disco. O fluxo nao foi gravado.
@@ -281,14 +308,14 @@ export function BlocksEditor({ projectId, path }: EditorProps) {
           <button type="button" onClick={doc.dismissExternal}>Manter minha versao</button>
         </div>
       )}
-      {modo === 'blocos' && doc.dirty && (
+      {modo !== 'codigo' && doc.dirty && (
         <div className="banner banner-warn" role="alert">
           <span>O codigo foi editado e ainda nao foi salvo. Salve ou descarte antes de gravar o fluxo.</span>
           <button type="button" onClick={() => void doc.save()}>Salvar codigo</button>
           <button type="button" onClick={() => void doc.reload()}>Descartar</button>
         </div>
       )}
-      {erro && modo === 'blocos' && <div className="banner banner-error">{erro}</div>}
+      {erro && modo !== 'codigo' && <div className="banner banner-error">{erro}</div>}
 
       {modo === 'codigo' ? (
         <div className="monaco-wrap">
@@ -304,7 +331,7 @@ export function BlocksEditor({ projectId, path }: EditorProps) {
             />
           </div>
         </div>
-      ) : (
+      ) : modo === 'malha' ? (
         <div className="blocks-main">
           <div className="blocks-canvas">
             <div className="blocks-canvas-host" ref={hostRef} />
@@ -323,6 +350,10 @@ export function BlocksEditor({ projectId, path }: EditorProps) {
             </div>
           </aside>
         </div>
+      ) : atual ? (
+        <HudView projectId={projectId} path={path} defs={defs} method={atual} onChange={gravarBlocosLocais} />
+      ) : (
+        <div className="editor-msg">Nenhum metodo neste arquivo.</div>
       )}
 
       {dialogo != null && <CreateBlockDialog codigo={dialogo} onFechar={() => setDialogo(null)} onCriar={gravarBloco} />}

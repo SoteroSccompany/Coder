@@ -1,6 +1,8 @@
 {
   "id": "seguranca.sha",
   "label": "SHA encrypt/hash",
+  "fala": "Criptografa com SHA em {{variavel}}",
+  "produz": ["variavel"],
   "categoria": "seguranca",
   "icone": "lock",
   "priority": 70,

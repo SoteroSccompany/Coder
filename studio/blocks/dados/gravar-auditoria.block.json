@@ -1,6 +1,8 @@
 {
   "id": "dados.gravar-auditoria",
   "label": "Gravar auditoria ledger",
+  "fala": "Grava a auditoria em {{variavel}}",
+  "produz": ["variavel"],
   "categoria": "dados",
   "icone": "audit",
   "priority": 95,

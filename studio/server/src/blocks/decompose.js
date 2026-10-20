@@ -60,6 +60,23 @@ function sequenceSource(source, list, minStart) {
   return source.slice(start, last.end);
 }
 
+/** Posicao do statement no arquivo. Metadado da resposta: o gerador nao usa. */
+function locDe(stmts) {
+  const lista = [].concat(stmts || []);
+  let inicio = null;
+  let fim = null;
+  for (const s of lista) {
+    if (!s || !s.loc || !s.loc.start || !s.loc.end) continue;
+    if (!inicio) inicio = s.loc.start;
+    fim = s.loc.end;
+  }
+  if (!inicio || !fim) return null;
+  return {
+    start: { line: inicio.line, column: inicio.column },
+    end: { line: fim.line, column: fim.column },
+  };
+}
+
 function freeNode(source, stmt, minStart, hint) {
   const text = sequenceSource(source, [stmt], minStart);
   return {
@@ -71,6 +88,7 @@ function freeNode(source, stmt, minStart, hint) {
     source: text,
     pristine: true,
     hint,
+    loc: locDe([stmt]),
   };
 }
 
@@ -88,6 +106,7 @@ function commentNode(source, stmt, minStart) {
     source: text,
     pristine: true,
     hint: null,
+    loc: locDe([stmt]),
   };
 }
 
@@ -104,6 +123,7 @@ function toNode(block, m, source, stmts, index, minStart) {
     hint: hintOf(stmts[index]),
     templateOverride: m.templateOverride || null,
     imports: m.imports || null,
+    loc: locDe(part),
   };
 }
 
@@ -198,7 +218,7 @@ function decomposeSource(source, library, parseFile) {
   return { methods };
 }
 
-/** Igualdade estrutural usada no fast-path (ignora `source`: o texto original volta inteiro). */
+/** Igualdade estrutural usada no fast-path (ignora `source` e `loc`: metadado nao entra no codigo). */
 function sameTree(a, b) {
   const aa = a || [];
   const bb = b || [];

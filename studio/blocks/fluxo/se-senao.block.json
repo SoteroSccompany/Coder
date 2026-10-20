@@ -1,6 +1,7 @@
 {
   "id": "fluxo.se-senao",
   "label": "Se / Senão",
+  "fala": "Se {{condicao}}, um caminho; senão, o outro",
   "categoria": "fluxo",
   "icone": "branch",
   "priority": 40,

@@ -30,9 +30,17 @@ export interface BlockDef {
   slots?: SlotDef[];
   imports?: ImportDef[];
   template?: string;
+  /** Variantes nomeadas (ex.: se-senao "se"). */
+  templates?: Record<string, string>;
   containers?: ContainerDef[];
   geracao?: string | null;
   origin?: string;
+  /** Frase com {{slot}}. Opcional: sem ela o HUD mostra o template preenchido. */
+  fala?: string;
+  /** Nomes que o bloco passa a declarar (ex.: user, trx). */
+  produz?: string[];
+  /** Nomes que o bloco precisa ler do contexto. Se ausente, o HUD estima pelos slots. */
+  le?: Array<string | { name?: string }>;
 }
 
 export interface FlowNode {
@@ -46,6 +54,8 @@ export interface FlowNode {
   hint?: string | null;
   templateOverride?: string | null;
   imports?: ImportDef[] | null;
+  /** Posicao no arquivo, quando o fluxo decompoe o statement. */
+  loc?: { start: { line: number; column: number }; end: { line: number; column: number } } | null;
 }
 
 export interface FlowMethod {

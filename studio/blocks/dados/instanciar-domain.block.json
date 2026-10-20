@@ -1,6 +1,8 @@
 {
   "id": "dados.instanciar-domain",
   "label": "Instanciar domain",
+  "fala": "Cria {{variavel}} a partir de {{classe}}",
+  "produz": ["variavel"],
   "categoria": "dados",
   "icone": "box",
   "priority": 48,

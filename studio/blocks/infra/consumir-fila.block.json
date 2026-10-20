@@ -1,6 +1,7 @@
 {
   "id": "infra.consumir-fila",
   "label": "Consumir fila",
+  "fala": "Consome a fila em {{alvo}}",
   "categoria": "infra",
   "icone": "inbox",
   "priority": 66,

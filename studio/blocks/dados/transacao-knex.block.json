@@ -1,6 +1,8 @@
 {
   "id": "dados.transacao-knex",
   "label": "Transação knex",
+  "fala": "Abre a transação {{trx}}",
+  "produz": ["trx"],
   "categoria": "dados",
   "icone": "transaction",
   "priority": 100,

@@ -1,6 +1,8 @@
 {
   "id": "infra.publicar-fila",
   "label": "Publicar na fila RabbitMQ",
+  "fala": "Publica {{item}} na fila usando {{variavel}}",
+  "produz": ["variavel"],
   "categoria": "infra",
   "icone": "queue",
   "priority": 90,

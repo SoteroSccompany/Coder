@@ -1,6 +1,7 @@
 {
   "id": "fluxo.retornar-status",
   "label": "Retornar {status, msg}",
+  "fala": "Devolve status {{status}} com a mensagem {{msg}}",
   "categoria": "fluxo",
   "icone": "return",
   "priority": 30,

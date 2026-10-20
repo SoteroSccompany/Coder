@@ -1,6 +1,8 @@
 {
   "id": "dados.buscar-usuario",
   "label": "Buscar usuário",
+  "fala": "Busca o usuário e guarda em {{variavel}}",
+  "produz": ["variavel"],
   "categoria": "dados",
   "icone": "user",
   "priority": 85,
